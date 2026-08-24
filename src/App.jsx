@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Toaster } from "sonner";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PublicRoute } from "./components/PublicRoute";
 import { AdminLayout } from "./components/AdminLayout";
 import { CustomerLayout } from "./components/CustomerLayout";
 import { SplashScreen } from "./components/SplashScreen";
 
 // Public Pages
-import { LandingPage } from "./pages/LandingPage";
 import { AdminLogin } from "./pages/auth/AdminLogin";
 import { CustomerLogin } from "./pages/auth/CustomerLogin";
 import { CustomerSignup } from "./pages/auth/CustomerSignup";
@@ -71,14 +71,14 @@ export function App() {
       <Toaster position="top-right" richColors />
 
       <Routes>
-        {/* PUBLIC LANDING & AUTH ROUTES */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/login" element={<CustomerLogin />} />
-        <Route path="/register" element={<CustomerSignup />} />
-        <Route path="/signup" element={<CustomerSignup />} />
-        <Route path="/verify-otp" element={<VerifyOtp />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* DIRECT LOGIN & SIGNUP AS HOMEPAGE (Auto-redirect if logged in) */}
+        <Route path="/" element={<PublicRoute><CustomerLogin /></PublicRoute>} />
+        <Route path="/admin/login" element={<PublicRoute><CustomerLogin /></PublicRoute>} />
+        <Route path="/login" element={<PublicRoute><CustomerLogin /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><CustomerSignup /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><CustomerSignup /></PublicRoute>} />
+        <Route path="/verify-otp" element={<PublicRoute><VerifyOtp /></PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
 
         {/* PROTECTED ADMIN WORKSTATION ROUTES */}
         <Route
@@ -152,7 +152,7 @@ export function App() {
           }
         />
 
-        {/* ALIAS REDIRECT ROUTES (prevents accidental fallback to root) */}
+        {/* ALIAS REDIRECT ROUTES */}
         <Route path="/customers" element={<Navigate to="/admin/customers" replace />} />
         <Route path="/customers/:id" element={<CustomerIdRedirect />} />
         <Route path="/sales" element={<Navigate to="/admin/sales" replace />} />

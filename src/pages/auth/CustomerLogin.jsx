@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../../lib/auth";
+import { loginUser, getCurrentUser } from "../../lib/auth";
 import { getLocalSettings } from "../../lib/firebase";
 import { toast } from "sonner";
 
@@ -8,14 +8,33 @@ export const CustomerLogin = () => {
   const navigate = useNavigate();
   const settings = getLocalSettings();
 
-  const [email, setEmail] = useState("asim@gmail.com");
-  const [password, setPassword] = useState("asim@2903");
+  // Inputs start completely blank so credentials must be entered manually
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Persistent session auto-redirect (Instagram style)
+  useEffect(() => {
+    const existingUser = getCurrentUser();
+    if (existingUser) {
+      if (existingUser.role === "admin") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrorMsg("");
+
+    if (!email.trim() || !password) {
+      setErrorMsg("Please enter both email address and password.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -23,10 +42,10 @@ export const CustomerLogin = () => {
       
       if (user.role === "admin") {
         toast.success(`Welcome Admin, ${user.name}!`);
-        navigate("/admin/dashboard");
+        navigate("/admin/dashboard", { replace: true });
       } else {
         toast.success(`Welcome back, ${user.name}!`);
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       }
     } catch (err) {
       setErrorMsg(err.message || "Invalid credentials.");
@@ -93,6 +112,7 @@ export const CustomerLogin = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
               className="w-full bg-[#18233c] border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-medium transition"
               placeholder="name@example.com"
             />
@@ -117,6 +137,7 @@ export const CustomerLogin = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
               className="w-full bg-[#18233c] border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-medium transition"
               placeholder="••••••••"
             />
