@@ -157,13 +157,23 @@ export const CustomerLogin = () => {
         </form>
 
         {/* Footer Info */}
-        <div className="border-t border-slate-800/80 pt-5 text-center space-y-1">
-          <p className="text-xs text-slate-400 flex items-center justify-center gap-1.5 font-medium">
-            <span>📍</span>
-            <span>{settings.address || "Main Wholesale Market Yard"} • {settings.phone || "+91 9876543210"}</span>
+        <div className="border-t border-slate-800/80 pt-5 text-center space-y-1.5 font-sans">
+          <p className="text-xs text-slate-300 font-medium flex items-center justify-center gap-1.5 px-2">
+            <span className="shrink-0">📍</span>
+            <span className="break-words">Nath pai circle, Shahapur, Belagavi, Karnataka 590005</span>
           </p>
-          <p className="text-[11px] text-slate-500 font-medium">
-            © {new Date().getFullYear()} {settings.shop_name || "A ONE STAR"}. All Rights Reserved.
+
+          <p className="text-xs text-slate-200 font-bold tracking-wide flex items-center justify-center gap-1.5">
+            <span className="shrink-0">📞</span>
+            <span className="whitespace-nowrap">+91 9035126865</span>
+          </p>
+
+          <p className="text-[11px] text-slate-400 font-medium pt-0.5">
+            © {new Date().getFullYear()} A ONE STAR. All Rights Reserved.
+          </p>
+
+          <p className="text-[11px] font-extrabold text-amber-400 tracking-wider uppercase pt-0.5">
+            Developed by ASIM KHATIK
           </p>
         </div>
 

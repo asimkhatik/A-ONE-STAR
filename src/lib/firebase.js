@@ -149,8 +149,8 @@ const INITIAL_PAYMENTS = [
 const DEFAULT_SETTINGS = {
   shop_name: "A ONE STAR",
   tagline: "Bharosa Bhi, Hisaab Bhi",
-  phone: "+91 98765 43210",
-  address: "Shop No. 4, Wholesale Poultry Market Yard",
+  phone: "+91 9035126865",
+  address: "Nath pai circle, Shahapur, Belagavi, Karnataka 590005",
   upi_id: "aonestar@upi",
   default_rate_per_kg: 130,
   reminder_enabled_global: true,
