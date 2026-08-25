@@ -186,7 +186,7 @@ export const CustomerLogin = () => {
           </p>
 
           <p className="text-[11px] font-extrabold text-amber-400 tracking-wider uppercase pt-0.5">
-            Developed by ASIM KHATIK
+            Designed by Asim Khatik
           </p>
         </div>
 

@@ -152,9 +152,8 @@ export const AdminLayout = ({
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#071f17] border-t border-emerald-900 text-center py-4 text-xs text-emerald-400 space-y-1">
+      <footer className="bg-[#071f17] border-t border-emerald-900 text-center py-4 text-xs text-emerald-400">
         <p>© {new Date().getFullYear()} {settings.shop_name || "A ONE STAR"} • {settings.tagline || "Bharosa Bhi, Hisaab Bhi"}</p>
-        <p className="text-[10px] font-extrabold text-amber-400 tracking-wider uppercase">Developed by ASIM KHATIK</p>
       </footer>
     </div>
   );

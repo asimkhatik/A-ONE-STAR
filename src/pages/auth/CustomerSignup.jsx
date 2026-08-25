@@ -212,10 +212,6 @@ export const CustomerSignup = () => {
           <p className="text-[11px] text-slate-400 font-medium pt-0.5">
             © {new Date().getFullYear()} A ONE STAR. All Rights Reserved.
           </p>
-
-          <p className="text-[11px] font-extrabold text-amber-400 tracking-wider uppercase pt-0.5">
-            Developed by ASIM KHATIK
-          </p>
         </div>
 
       </div>
