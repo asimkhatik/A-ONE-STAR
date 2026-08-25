@@ -81,16 +81,6 @@ export const CustomerSignup = () => {
           <p className="text-xs sm:text-sm font-bold text-amber-400 tracking-wider uppercase">
             Bharosa Bhi, Hisaab Bhi
           </p>
-
-          {/* Subtitle Lines */}
-          <div className="pt-2 space-y-0.5 font-sans">
-            <p className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-              Every Bird Counted.
-            </p>
-            <p className="text-xl sm:text-2xl font-extrabold text-amber-400 tracking-tight">
-              Every Rupee Tracked.
-            </p>
-          </div>
         </div>
 
         {/* Animated Navigation Tabs */}
