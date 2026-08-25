@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    @apply bg-slate-900 text-white font-sans antialiased selection:bg-amber-400 selection:text-slate-950;
   }
 }
 
@@ -19,11 +19,112 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
+/* -------------------------------------------------------------
+ * FULL WEBSITE ANIMATIONS & KEYFRAMES
+ * ------------------------------------------------------------- */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.15s ease-out forwards;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  70% {
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+    border-color: rgba(245, 158, 11, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(245, 158, 11, 0.5);
+    border-color: rgba(245, 158, 11, 0.8);
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animation Utility Classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pop-in {
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+/* Stagger Animation Delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* Interactive Hover Animations */
+.hover-card-anim {
+  @apply transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-emerald-500/10 hover:border-slate-700;
+}
+
+.button-press-anim {
+  @apply transition-all duration-150 active:scale-95 hover:brightness-110;
+}
+
+/* Glassmorphism Card Styling */
+.glass-panel {
+  @apply bg-[#0f172a]/90 backdrop-blur-xl border border-slate-800/80 shadow-2xl;
 }

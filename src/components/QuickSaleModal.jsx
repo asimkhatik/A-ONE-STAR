@@ -59,60 +59,59 @@ export const QuickSaleModal = ({
       addSale({
         customer_id: customerId,
         sale_date: saleDate,
-        quantity_of_broilers: birdsCount ? parseInt(birdsCount) : undefined,
+        quantity_of_broilers: parseInt(birdsCount) || 0,
         weight_kg: weightNum,
         rate_per_kg: rateNum,
         total_amount: totalAmount,
         notes: notes.trim() || undefined
       });
 
-      toast.success(`Sale of ${totalAmount.toLocaleString('en-IN')} recorded successfully`);
-      // Reset form
-      setWeightKg("");
-      setBirdsCount("");
-      setNotes("");
-      onClose();
+      toast.success("Sale entry recorded successfully!");
       if (onSuccess) onSuccess();
+      onClose();
+
+      // Reset
+      setBirdsCount("");
+      setWeightKg("");
+      setNotes("");
     } catch (err) {
-      toast.error("Failed to record sale: " + err.message);
+      toast.error(err.message || "Failed to record sale");
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in-down">
+      <div className="bg-[#0f172a] text-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-800 animate-pop-in">
         {/* Modal Header */}
-        <div className="bg-brand-900 text-white px-6 py-4 flex items-center justify-between">
+        <div className="bg-[#0b3d2e] px-6 py-4 flex items-center justify-between border-b border-emerald-800/80">
           <div className="flex items-center space-x-2">
             <ShoppingCart className="w-5 h-5 text-amber-400" />
-            <h3 className="font-heading text-lg font-bold">Record Live Chicken Sale</h3>
+            <h3 className="font-heading text-lg font-bold text-white">Record Live Chicken Sale</h3>
           </div>
           <button 
             onClick={onClose}
-            className="text-emerald-200 hover-white p-1 rounded-lg hover-emerald-800 transition"
+            className="text-emerald-200 hover:text-white p-1 rounded-lg hover:bg-emerald-800/60 transition active:scale-95"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 font-sans">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
               Select Customer *
             </label>
             <select
               value={customerId}
               onChange={(e) => setCustomerId(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus-2 focus-emerald-500 focus-emerald-500 text-sm"
+              className="w-full bg-[#18233c] border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400 transition"
             >
               <option value="">-- Choose Customer --</option>
               {customers.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name} {c.phone ? `(${c.phone})` : ""} - Current Bal: {formatCurrency(c.current_balance)}
+                  {c.name} {c.phone ? `(${c.phone})` : ""} - Bal: {formatCurrency(c.current_balance)}
                 </option>
               ))}
             </select>
@@ -120,7 +119,7 @@ export const QuickSaleModal = ({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Sale Date *
               </label>
               <input
@@ -128,92 +127,93 @@ export const QuickSaleModal = ({
                 value={saleDate}
                 onChange={(e) => setSaleDate(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus-2 focus-emerald-500 focus-emerald-500 text-sm"
+                className="w-full bg-[#18233c] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400 transition"
               />
             </div>
+
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Birds Count (Optional)
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                No. of Birds (Optional)
               </label>
               <input
                 type="number"
-                placeholder="e.g. 45"
                 value={birdsCount}
                 onChange={(e) => setBirdsCount(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus-2 focus-emerald-500 focus-emerald-500 text-sm"
+                placeholder="e.g. 25"
+                className="w-full bg-[#18233c] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Weight (kg) *
               </label>
               <input
                 type="number"
                 step="0.01"
-                placeholder="e.g. 105.5"
                 value={weightKg}
                 onChange={(e) => setWeightKg(e.target.value)}
+                placeholder="0.00"
                 required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus-2 focus-emerald-500 focus-emerald-500 text-sm font-semibold text-slate-900"
+                className="w-full bg-[#18233c] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
               />
             </div>
+
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Rate (₹ / kg) *
               </label>
               <input
                 type="number"
                 step="0.1"
-                placeholder="e.g. 130"
                 value={ratePerKg}
                 onChange={(e) => setRatePerKg(e.target.value)}
+                placeholder="130"
                 required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus-2 focus-emerald-500 focus-emerald-500 text-sm font-semibold text-slate-900"
+                className="w-full bg-[#18233c] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
               />
             </div>
           </div>
 
-          {/* Computed Amount Display Box */}
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-emerald-800">
-              <Calculator className="w-5 h-5 text-emerald-600" />
-              <span className="text-xs font-semibold uppercase">Total Calculated Bill:</span>
+          {/* Auto Calculation Preview */}
+          <div className="bg-[#18233c] p-4 rounded-2xl border border-slate-700 flex items-center justify-between">
+            <div className="flex items-center space-x-2 text-slate-300 text-xs font-bold">
+              <Calculator className="w-4 h-4 text-amber-400" />
+              <span>Calculated Total Bill:</span>
             </div>
-            <span className="text-xl font-extrabold text-emerald-900">
+            <span className="text-xl font-extrabold text-amber-400 font-sans tabular-nums">
               {formatCurrency(totalAmount)}
             </span>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-              Notes / Vehicles (Optional)
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+              Notes / Vehicle Ref
             </label>
             <input
               type="text"
-              placeholder="e.g. Vehicle MH-12-AB-1234 / Morning Batch"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus-2 focus-emerald-500 focus-emerald-500 text-sm"
+              placeholder="e.g. Batch #4, Driver Ramesh"
+              className="w-full bg-[#18233c] border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
             />
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-2">
+          <div className="pt-2 flex justify-end space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-600 hover-slate-900 bg-slate-100 hover-slate-200 rounded-lg transition"
+              className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 font-bold text-xs hover:bg-slate-800 transition active:scale-95"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 text-sm font-bold text-slate-950 bg-amber-400 hover-amber-300 rounded-lg shadow-md transition"
+              className="px-6 py-2.5 bg-amber-400 hover:bg-amber-300 text-[#0b3d2e] font-extrabold text-xs rounded-xl shadow-lg transition active:scale-95"
             >
-              Save Sale Entry
+              Save & Record Sale
             </button>
           </div>
         </form>

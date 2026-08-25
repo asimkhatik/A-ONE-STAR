@@ -13,7 +13,6 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  Play,
   Bird,
   Calendar,
   Send
@@ -93,7 +92,7 @@ export const AdminDashboard = ({
   };
 
   return (
-    <div className="space-y-6 pb-12 font-sans text-white">
+    <div className="space-y-6 pb-12 font-sans text-white animate-fade-in-up">
       {/* Welcome & Quick Action Header Banner */}
       <div className="bg-[#0b3d2e] border border-emerald-800/80 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
         <div className="space-y-2 z-10">
@@ -113,7 +112,7 @@ export const AdminDashboard = ({
           {onOpenSaleModal && (
             <button
               onClick={onOpenSaleModal}
-              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 bg-amber-400 hover:bg-amber-300 text-[#0b3d2e] font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition active:scale-95"
+              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 bg-amber-400 hover:bg-amber-300 text-[#0b3d2e] font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition active:scale-95 button-press-anim"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               <span>+ Record Sale</span>
@@ -122,7 +121,7 @@ export const AdminDashboard = ({
           {onOpenPaymentModal && (
             <button
               onClick={onOpenPaymentModal}
-              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition active:scale-95"
+              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition active:scale-95 button-press-anim"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               <span>+ Payment</span>
@@ -131,7 +130,7 @@ export const AdminDashboard = ({
           {onOpenCustomerModal && (
             <button
               onClick={onOpenCustomerModal}
-              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition active:scale-95"
+              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition active:scale-95 button-press-anim"
             >
               <Users className="w-4 h-4" />
               <span>+ Customer</span>
@@ -140,10 +139,10 @@ export const AdminDashboard = ({
         </div>
       </div>
 
-      {/* Modern Dark Glassmorphism Stat Cards Grid */}
+      {/* Modern Dark Glassmorphism Stat Cards Grid with Entry Animations */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* 1. Today's Revenue */}
-        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover:border-emerald-500/40 transition">
+        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover-card-anim animate-fade-in-up delay-100">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Today's Sales Revenue</span>
             <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
@@ -161,7 +160,7 @@ export const AdminDashboard = ({
         </div>
 
         {/* 2. Weight Sold */}
-        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover:border-blue-500/40 transition">
+        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover-card-anim animate-fade-in-up delay-200">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Today's Weight Sold</span>
             <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
@@ -180,7 +179,7 @@ export const AdminDashboard = ({
         </div>
 
         {/* 3. Payments Received */}
-        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover:border-amber-500/40 transition">
+        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover-card-anim animate-fade-in-up delay-300">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Payments Collected</span>
             <div className="p-2 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
@@ -198,7 +197,7 @@ export const AdminDashboard = ({
         </div>
 
         {/* 4. Total Outstanding */}
-        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover:border-rose-500/40 transition">
+        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover-card-anim animate-fade-in-up delay-400">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Outstanding</span>
             <div className="p-2 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
@@ -217,7 +216,7 @@ export const AdminDashboard = ({
       </div>
 
       {/* WhatsApp Reminders Panel */}
-      <div className="bg-[#0b3d2e] text-white rounded-3xl p-6 shadow-xl space-y-4 border border-emerald-800">
+      <div className="bg-[#0b3d2e] text-white rounded-3xl p-6 shadow-xl space-y-4 border border-emerald-800 animate-fade-in-up">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-emerald-800/80 pb-4">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-2xl bg-emerald-800 text-amber-300 flex items-center justify-center font-bold">
@@ -247,7 +246,7 @@ export const AdminDashboard = ({
 
             <button
               onClick={handleRunRemindersNow}
-              className="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow transition active:scale-95"
+              className="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow transition active:scale-95 button-press-anim"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Send Now (WhatsApp Web)</span>
@@ -257,7 +256,7 @@ export const AdminDashboard = ({
 
         {/* Reminders Status Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-1">
-          <div className="bg-emerald-900/60 p-3.5 rounded-2xl border border-emerald-800">
+          <div className="bg-emerald-900/60 p-3.5 rounded-2xl border border-emerald-800 hover-card-anim">
             <span className="text-[11px] font-bold text-emerald-300 uppercase block">Scheduled Time</span>
             <span className="text-lg font-extrabold text-amber-300 flex items-center gap-1.5 mt-1 font-mono">
               <Clock className="w-4 h-4 text-amber-400" />
@@ -265,14 +264,14 @@ export const AdminDashboard = ({
             </span>
           </div>
 
-          <div className="bg-emerald-900/60 p-3.5 rounded-2xl border border-emerald-800">
+          <div className="bg-emerald-900/60 p-3.5 rounded-2xl border border-emerald-800 hover-card-anim">
             <span className="text-[11px] font-bold text-emerald-300 uppercase block">Last Reminder Run</span>
             <span className="text-sm font-bold text-white mt-1 block">
               {settings.last_reminder_run ? formatDate(settings.last_reminder_run) : "Not run today"}
             </span>
           </div>
 
-          <div className="bg-emerald-900/60 p-3.5 rounded-2xl border border-emerald-800">
+          <div className="bg-emerald-900/60 p-3.5 rounded-2xl border border-emerald-800 hover-card-anim">
             <span className="text-[11px] font-bold text-emerald-300 uppercase block">Successful Sent</span>
             <span className="text-lg font-extrabold text-emerald-400 flex items-center gap-1 mt-1 font-sans tabular-nums">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -280,7 +279,7 @@ export const AdminDashboard = ({
             </span>
           </div>
 
-          <div className="bg-emerald-900/60 p-3.5 rounded-2xl border border-emerald-800">
+          <div className="bg-emerald-900/60 p-3.5 rounded-2xl border border-emerald-800 hover-card-anim">
             <span className="text-[11px] font-bold text-emerald-300 uppercase block">Failed / Errors</span>
             <span className="text-lg font-extrabold text-red-400 flex items-center gap-1 mt-1 font-sans tabular-nums">
               <XCircle className="w-4 h-4 text-red-400" />
@@ -291,9 +290,9 @@ export const AdminDashboard = ({
       </div>
 
       {/* Recent Activity Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up">
         {/* Recent Sales */}
-        <div className="lg:col-span-2 bg-[#0f172a] rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col">
+        <div className="lg:col-span-2 bg-[#0f172a] rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col hover-card-anim">
           <div className="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/50">
             <div className="flex items-center space-x-2">
               <ShoppingCart className="w-5 h-5 text-amber-400" />
@@ -312,7 +311,7 @@ export const AdminDashboard = ({
               </div>
             ) : (
               sales.slice(0, 6).map((sale) => (
-                <div key={sale.id} className="p-4 hover:bg-slate-800/50 flex items-center justify-between gap-4 transition">
+                <div key={sale.id} className="p-4 hover:bg-slate-800/50 flex items-center justify-between gap-4 transition-all duration-200">
                   <div className="flex items-center space-x-3">
                     <div className="w-9 h-9 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center font-bold text-xs font-sans tabular-nums border border-amber-400/30">
                       {sale.weight_kg}kg
@@ -339,8 +338,8 @@ export const AdminDashboard = ({
           </div>
         </div>
 
-        {/* Highest Outstanding Customers with Direct WhatsApp Reminder Button */}
-        <div className="bg-[#0f172a] rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col">
+        {/* Highest Outstanding Customers */}
+        <div className="bg-[#0f172a] rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col hover-card-anim">
           <div className="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/50">
             <div className="flex items-center space-x-2">
               <Users className="w-5 h-5 text-rose-400" />
@@ -358,7 +357,7 @@ export const AdminDashboard = ({
               .sort((a, b) => b.current_balance - a.current_balance)
               .slice(0, 5)
               .map((customer) => (
-                <div key={customer.id} className="p-4 hover:bg-slate-800/50 flex items-center justify-between gap-3 transition">
+                <div key={customer.id} className="p-4 hover:bg-slate-800/50 flex items-center justify-between gap-3 transition-all duration-200">
                   <div>
                     <Link to={`/admin/customers/${customer.id}`} className="font-semibold text-white text-sm hover:text-amber-400 block transition">
                       {customer.name}
@@ -377,7 +376,7 @@ export const AdminDashboard = ({
 
                     <button
                       onClick={() => handleSendSingleReminder(customer)}
-                      className="p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow transition"
+                      className="p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow transition active:scale-95 button-press-anim"
                       title={`Send WhatsApp Reminder to ${customer.name}`}
                     >
                       <MessageSquare className="w-4 h-4 fill-current" />

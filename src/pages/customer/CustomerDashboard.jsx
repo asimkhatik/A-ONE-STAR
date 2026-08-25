@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
-  User, 
   CreditCard, 
   ShoppingCart, 
   Download, 
   QrCode, 
   Phone, 
   MapPin, 
-  DollarSign,
-  FileText,
-  ArrowRight
+  DollarSign
 } from "lucide-react";
 import { getCurrentUser } from "../../lib/auth";
 import { 
@@ -63,9 +60,9 @@ export const CustomerDashboard = () => {
 
   if (!customer) {
     return (
-      <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 my-8">
-        <h2 className="text-xl font-bold text-slate-800">Account Setup In Progress</h2>
-        <p className="text-slate-500 text-sm mt-1">Your customer profile is currently being synchronized.</p>
+      <div className="p-12 text-center bg-[#0f172a] rounded-3xl border border-slate-800 my-8 shadow-xl animate-fade-in-up">
+        <h2 className="text-xl font-bold text-white">Account Setup In Progress</h2>
+        <p className="text-slate-400 text-sm mt-1">Your customer profile is currently being synchronized.</p>
       </div>
     );
   }
@@ -127,17 +124,17 @@ export const CustomerDashboard = () => {
   };
 
   return (
-    <div className="space-y-6 pb-12 font-sans">
+    <div className="space-y-6 pb-12 font-sans text-white animate-fade-in-up">
       {/* Customer Header Banner */}
-      <div className="bg-brand-900 text-white p-6 sm-8 rounded-3xl shadow-xl flex flex-col md-row items-start md-center justify-between gap-6 relative overflow-hidden">
+      <div className="bg-[#0b3d2e] border border-emerald-800/80 text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
         <div className="space-y-2 z-10">
           <div className="inline-flex items-center space-x-2 bg-amber-400/20 text-amber-300 text-xs px-3 py-1 rounded-full font-semibold border border-amber-400/30">
             <span>CUSTOMER DASHBOARD</span>
           </div>
-          <h1 className="font-heading text-3xl sm-4xl font-extrabold tracking-tight">
+          <h1 className="font-heading text-3xl sm:text-4xl font-extrabold tracking-tight">
             Welcome, {customer.name}!
           </h1>
-          <div className="flex flex-wrap items-center gap-4 text-xs sm-sm text-emerald-200">
+          <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-emerald-200">
             {customer.phone && (
               <span className="flex items-center gap-1.5">
                 <Phone className="w-4 h-4 text-amber-300" />
@@ -154,7 +151,7 @@ export const CustomerDashboard = () => {
         </div>
 
         {/* Outstanding Balance Highlight & Pay Now Button */}
-        <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center w-full md-auto z-10 flex flex-col items-center">
+        <div className="bg-emerald-950/60 backdrop-blur-md p-5 rounded-2xl border border-emerald-700/60 text-center w-full md:w-auto z-10 flex flex-col items-center">
           <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-200">
             Current Outstanding Bill
           </span>
@@ -168,7 +165,7 @@ export const CustomerDashboard = () => {
             {customer.current_balance > 0 && (
               <button
                 onClick={() => setIsPayNowModalOpen(true)}
-                className="flex-1 flex items-center justify-center space-x-1.5 bg-blue-600 hover-blue-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition active-95 animate-pulse"
+                className="flex-1 flex items-center justify-center space-x-1.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition active:scale-95 button-press-anim animate-pulse"
               >
                 <QrCode className="w-4 h-4" />
                 <span>Pay Now (UPI / GPay)</span>
@@ -176,7 +173,7 @@ export const CustomerDashboard = () => {
             )}
             <button
               onClick={handleDownloadPDF}
-              className="flex-1 flex items-center justify-center space-x-1.5 bg-emerald-800 hover-emerald-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl border border-emerald-600 transition"
+              className="flex-1 flex items-center justify-center space-x-1.5 bg-emerald-800 hover:bg-emerald-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl border border-emerald-600 transition active:scale-95 button-press-anim"
             >
               <Download className="w-4 h-4" />
               <span>PDF Statement</span>
@@ -185,16 +182,18 @@ export const CustomerDashboard = () => {
         </div>
       </div>
 
-      {/* Overview Metric Cards Grid */}
-      <div className="grid grid-cols-1 sm-cols-3 gap-5">
+      {/* Overview Metric Cards Grid with Entry Delays */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         
-        {/* Total Purchases -> Royal Blue */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover-md transition">
+        {/* Total Purchases */}
+        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover-card-anim animate-fade-in-up delay-100">
           <div className="flex items-center justify-between text-slate-400 text-[11px] font-bold uppercase tracking-wider">
             <span>Total Purchases</span>
-            <ShoppingCart className="w-4 h-4 text-blue-600" />
+            <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
+              <ShoppingCart className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-3xl font-extrabold text-blue-600 tracking-tight mt-2">
+          <div className="text-3xl font-extrabold text-blue-400 tracking-tight mt-2">
             <AnimatedNumber value={totalPurchases} prefix="₹ " />
           </div>
           <span className="text-xs text-slate-400 mt-1 block font-medium">
@@ -202,26 +201,30 @@ export const CustomerDashboard = () => {
           </span>
         </div>
 
-        {/* Total Paid -> Gold / Emerald */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover-md transition">
+        {/* Total Paid */}
+        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover-card-anim animate-fade-in-up delay-200">
           <div className="flex items-center justify-between text-slate-400 text-[11px] font-bold uppercase tracking-wider">
             <span>Total Amount Paid</span>
-            <CreditCard className="w-4 h-4 text-amber-500" />
+            <div className="p-2 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+              <CreditCard className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-3xl font-extrabold text-amber-600 tracking-tight mt-2">
+          <div className="text-3xl font-extrabold text-amber-400 tracking-tight mt-2">
             <AnimatedNumber value={totalPaid} prefix="₹ " />
           </div>
           <span className="text-xs text-slate-400 mt-1 block font-medium">{payments.length} transactions</span>
         </div>
 
-        {/* Net Balance Due -> Elegant Red */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover-md transition">
+        {/* Net Balance Due */}
+        <div className="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 shadow-xl hover-card-anim animate-fade-in-up delay-300">
           <div className="flex items-center justify-between text-slate-400 text-[11px] font-bold uppercase tracking-wider">
             <span>Net Balance Due</span>
-            <DollarSign className="w-4 h-4 text-rose-600" />
+            <div className="p-2 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
+              <DollarSign className="w-4 h-4" />
+            </div>
           </div>
           <div className={`text-3xl font-extrabold tracking-tight mt-2 ${
-            customer.current_balance > 0 ? "text-rose-600" : "text-emerald-700"
+            customer.current_balance > 0 ? "text-rose-400" : "text-emerald-400"
           }`}>
             <AnimatedNumber value={customer.current_balance} prefix="₹ " />
           </div>
@@ -233,42 +236,42 @@ export const CustomerDashboard = () => {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-            <h3 className="font-heading font-bold text-slate-900 text-base">Recent Purchases</h3>
-            <Link to="/dashboard/purchases" className="text-xs font-semibold text-emerald-700 hover">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-up">
+        <div className="bg-[#0f172a] rounded-3xl border border-slate-800 shadow-xl p-5 hover-card-anim">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-3">
+            <h3 className="font-heading font-bold text-white text-base">Recent Purchases</h3>
+            <Link to="/dashboard/purchases" className="text-xs font-semibold text-amber-400 hover:underline">
               View All →
             </Link>
           </div>
-          <div className="divide-y divide-slate-100 text-sm">
+          <div className="divide-y divide-slate-800/60 text-sm">
             {sales.slice(0, 5).map((sale) => (
-              <div key={sale.id} className="py-2.5 flex items-center justify-between">
+              <div key={sale.id} className="py-2.5 flex items-center justify-between hover:bg-slate-800/40 px-2 rounded-xl transition">
                 <div>
-                  <span className="font-bold text-slate-900">{sale.weight_kg} kg ({sale.quantity_of_broilers || 0} birds)</span>
-                  <span className="text-xs text-slate-500 block">{formatDate(sale.sale_date)}</span>
+                  <span className="font-bold text-slate-200">{sale.weight_kg} kg ({sale.quantity_of_broilers || 0} birds)</span>
+                  <span className="text-xs text-slate-400 block">{formatDate(sale.sale_date)}</span>
                 </div>
-                <span className="font-bold text-slate-900 font-sans tabular-nums">{formatCurrency(sale.total_amount)}</span>
+                <span className="font-bold text-emerald-400 font-sans tabular-nums">{formatCurrency(sale.total_amount)}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-            <h3 className="font-heading font-bold text-slate-900 text-base">Recent Payments</h3>
-            <Link to="/dashboard/payments" className="text-xs font-semibold text-emerald-700 hover">
+        <div className="bg-[#0f172a] rounded-3xl border border-slate-800 shadow-xl p-5 hover-card-anim">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-3">
+            <h3 className="font-heading font-bold text-white text-base">Recent Payments</h3>
+            <Link to="/dashboard/payments" className="text-xs font-semibold text-amber-400 hover:underline">
               View All →
             </Link>
           </div>
-          <div className="divide-y divide-slate-100 text-sm">
+          <div className="divide-y divide-slate-800/60 text-sm">
             {payments.slice(0, 5).map((pay) => (
-              <div key={pay.id} className="py-2.5 flex items-center justify-between">
+              <div key={pay.id} className="py-2.5 flex items-center justify-between hover:bg-slate-800/40 px-2 rounded-xl transition">
                 <div>
-                  <span className="font-bold text-slate-900">{pay.payment_mode} ({pay.payment_gateway || 'Manual'})</span>
-                  <span className="text-xs text-slate-500 block">{formatDate(pay.payment_date)} • {pay.transaction_id || ''}</span>
+                  <span className="font-bold text-slate-200">{pay.payment_mode} ({pay.payment_gateway || 'Manual'})</span>
+                  <span className="text-xs text-slate-400 block">{formatDate(pay.payment_date)} • {pay.transaction_id || ''}</span>
                 </div>
-                <span className="font-bold text-emerald-700 font-sans tabular-nums">{formatCurrency(pay.amount)}</span>
+                <span className="font-bold text-emerald-400 font-sans tabular-nums">{formatCurrency(pay.amount)}</span>
               </div>
             ))}
           </div>
