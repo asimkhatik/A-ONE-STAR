@@ -62,15 +62,38 @@ export const CustomerLogin = () => {
       {/* Main Animated Card */}
       <div className="bg-[#0f172a]/95 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl max-w-md w-full p-8 sm:p-10 z-10 relative space-y-6 animate-pop-in">
         
-        {/* Title */}
-        <div className="text-center space-y-1.5 animate-fade-in-down">
-          <h1 className="font-heading font-extrabold text-3xl sm:text-4xl text-white tracking-tight flex items-center justify-center gap-2">
-            <span>Welcome Back</span>
-            <span className="text-3xl animate-bounce">👋</span>
+        {/* Logo & Brand Header */}
+        <div className="text-center space-y-2 animate-fade-in-down">
+          {/* Logo Badge */}
+          <div className="flex justify-center mb-3">
+            <div className="w-20 h-20 rounded-2xl bg-slate-900 p-1 border-2 border-amber-400/50 shadow-2xl shadow-amber-400/20 overflow-hidden shrink-0 animate-pulse-glow">
+              <img
+                src="/logo.jpg"
+                alt="A ONE STAR Logo"
+                className="w-full h-full object-cover rounded-xl"
+              />
+            </div>
+          </div>
+
+          {/* Shop Name */}
+          <h1 className="font-heading font-extrabold text-3xl sm:text-4xl text-white tracking-wide">
+            A ONE STAR
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 font-medium">
-            Sign in with your Email & Password to access your portal
+
+          {/* Tagline */}
+          <p className="text-xs sm:text-sm font-bold text-amber-400 tracking-wider uppercase">
+            Bharosa Bhi, Hisaab Bhi
           </p>
+
+          {/* Subtitle Lines */}
+          <div className="pt-2 space-y-0.5 font-sans">
+            <p className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+              Every Bird Counted.
+            </p>
+            <p className="text-xl sm:text-2xl font-extrabold text-amber-400 tracking-tight">
+              Every Rupee Tracked.
+            </p>
+          </div>
         </div>
 
         {/* Animated Navigation Tabs */}
