@@ -127,11 +127,11 @@ export const CustomerLedger = ({
 
   const settings = getLocalSettings();
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     setIsExporting(true);
     try {
-      generateCustomerLedgerPDF(customer, ledgerItems, settings);
-      toast.success("Statement PDF downloaded");
+      await generateCustomerLedgerPDF(customer, ledgerItems, settings);
+      toast.success("Statement PDF generated successfully");
     } catch (err) {
       toast.error("Failed to generate PDF");
     } finally {

@@ -118,9 +118,13 @@ export const CustomerDashboard = () => {
     return { ...item, balance: runningBal };
   });
 
-  const handleDownloadPDF = () => {
-    generateCustomerLedgerPDF(customer, ledgerItems, settings);
-    toast.success("Downloaded your ledger statement PDF");
+  const handleDownloadPDF = async () => {
+    try {
+      await generateCustomerLedgerPDF(customer, ledgerItems, settings);
+      toast.success("Downloaded your ledger statement PDF");
+    } catch (err) {
+      toast.error("Failed to generate PDF statement");
+    }
   };
 
   return (

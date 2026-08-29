@@ -1,5 +1,8 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { Capacitor } from "@capacitor/core";
+import { Filesystem, Directory } from "@capacitor/filesystem";
+import { Share } from "@capacitor/share";
 
 // Helper to load shop logo image as Base64 Data URL for jsPDF
 function loadLogoImage() {
@@ -332,8 +335,35 @@ export async function generateCustomerLedgerPDF(customer, ledgerItems = [], sett
 
     const fileName = `${(customer?.name || "Customer").replace(/[^a-zA-Z0-9]/g, "_")}_Statement.pdf`;
     
-    // Save PDF
-    doc.save(fileName);
+    // Save or Share PDF based on platform
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const base64Data = doc.output("datauristring").split(",")[1];
+        const savedFile = await Filesystem.writeFile({
+          path: fileName,
+          data: base64Data,
+          directory: Directory.Cache,
+        });
+
+        await Share.share({
+          title: `${customer?.name || "Customer"} Statement PDF`,
+          text: `Statement PDF for ${customer?.name || "Customer"}`,
+          url: savedFile.uri,
+          dialogTitle: "Save / Open Statement PDF",
+        });
+      } catch (nativeErr) {
+        console.warn("Capacitor Native Save Error, trying fallback:", nativeErr);
+        try {
+          doc.save(fileName);
+        } catch (e) {
+          const blobUrl = doc.output("bloburl");
+          window.open(blobUrl, "_blank");
+        }
+      }
+    } else {
+      // Standard Web Browser
+      doc.save(fileName);
+    }
   } catch (globalErr) {
     console.error("PDF Generation Error:", globalErr);
   }
