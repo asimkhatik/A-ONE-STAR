@@ -206,7 +206,7 @@ export const CustomerSignup = () => {
 
           <p className="text-xs text-slate-200 font-bold tracking-wide flex items-center justify-center gap-1.5">
             <span className="shrink-0">📞</span>
-            <span className="whitespace-nowrap">+91 9035126865</span>
+            <span className="whitespace-nowrap">+91 6360336783</span>
           </p>
 
           <p className="text-[11px] text-slate-400 font-medium pt-0.5">

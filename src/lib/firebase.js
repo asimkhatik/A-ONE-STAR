@@ -149,7 +149,7 @@ const INITIAL_PAYMENTS = [
 const DEFAULT_SETTINGS = {
   shop_name: "A ONE STAR",
   tagline: "Bharosa Bhi, Hisaab Bhi",
-  phone: "+91 9035126865",
+  phone: "+91 6360336783",
   address: "Nath pai circle, Shahapur, Belagavi, Karnataka 590005",
   upi_id: "aonestar@upi",
   default_rate_per_kg: 130,
@@ -344,7 +344,11 @@ export function saveCustomer(customerData) {
       updatedCust = {
         ...customers[idx],
         ...customerData,
-        whatsapp_number: customerData.whatsapp_number || customerData.phone || "",
+        shop_name: customerData.shop_name || customerData.name || customers[idx].shop_name || customers[idx].name || "",
+        email: customerData.email || customers[idx].email || "",
+        mobile_number: customerData.mobile_number || customerData.phone || customerData.whatsapp_number || customers[idx].mobile_number || customers[idx].phone || "",
+        phone: customerData.phone || customerData.mobile_number || customerData.whatsapp_number || customers[idx].phone || "",
+        whatsapp_number: customerData.whatsapp_number || customerData.phone || customerData.mobile_number || customers[idx].whatsapp_number || "",
         updated_at: new Date().toISOString()
       };
       customers[idx] = updatedCust;
@@ -356,7 +360,11 @@ export function saveCustomer(customerData) {
     updatedCust = {
       id: newId,
       ...customerData,
-      whatsapp_number: customerData.whatsapp_number || customerData.phone || "",
+      shop_name: customerData.shop_name || customerData.name || "",
+      email: customerData.email || "",
+      mobile_number: customerData.mobile_number || customerData.phone || customerData.whatsapp_number || "",
+      phone: customerData.phone || customerData.mobile_number || customerData.whatsapp_number || "",
+      whatsapp_number: customerData.whatsapp_number || customerData.phone || customerData.mobile_number || "",
       reminder_enabled: customerData.reminder_enabled !== undefined ? customerData.reminder_enabled : true,
       current_balance: customerData.opening_balance || 0,
       created_at: new Date().toISOString()
@@ -412,6 +420,7 @@ export function addSale(saleData) {
     id: "sale_" + Date.now(),
     ...saleData,
     customer_name: customer ? customer.name : "Unknown Customer",
+    shop_name: customer ? (customer.shop_name || customer.name) : "Unknown Customer",
     created_at: new Date().toISOString()
   };
 
@@ -461,6 +470,7 @@ export function addPayment(paymentData) {
     payment_status: paymentData.payment_status || "successful",
     ...paymentData,
     customer_name: customer ? customer.name : "Unknown Customer",
+    shop_name: customer ? (customer.shop_name || customer.name) : "Unknown Customer",
     created_at: new Date().toISOString()
   };
 
