@@ -1,4 +1,5 @@
-import { saveCustomer } from "./firebase";
+import { saveCustomer, db, sanitizeForFirestore } from "./firebase";
+import { collection, doc, setDoc, onSnapshot, query } from "firebase/firestore";
 
 const KEYS = {
   USERS: "a_one_star_users_db_v2",
@@ -7,7 +8,9 @@ const KEYS = {
   RATE_LIMITS: "a_one_star_rate_limits_v1"
 };
 
-// Seed initial system users (Exclusive Admin & Demo Customers)
+const DEMO_USER_IDS = new Set(["usr-cust-1", "usr-cust-2"]);
+
+// Seed initial system users (Exclusive Admin only)
 const INITIAL_USERS = [
   {
     id: "usr-admin-exclusive",
@@ -18,34 +21,42 @@ const INITIAL_USERS = [
     status: "active",
     password_hash: "asim@2903",
     created_at: new Date("2026-08-01").toISOString(),
-  },
-  {
-    id: "usr-cust-1",
-    name: "Al-Madina Chicken Shop",
-    email: "madina@aonestar.com",
-    phone: "9876543210",
-    role: "customer",
-    customer_id: "cust-1",
-    status: "active",
-    password_hash: "customer123",
-    created_at: new Date("2026-08-01").toISOString(),
-  },
-  {
-    id: "usr-cust-2",
-    name: "Star Broiler Center",
-    email: "star@aonestar.com",
-    phone: "9123456789",
-    role: "customer",
-    customer_id: "cust-2",
-    status: "active",
-    password_hash: "customer123",
-    created_at: new Date("2026-08-05").toISOString(),
-  },
+  }
 ];
 
 // Reactive Auth Listener
 const authListeners = new Set();
 const notifyAuth = (user) => authListeners.forEach((l) => l(user));
+
+// Sync Firestore Users Listener
+try {
+  onSnapshot(query(collection(db, "users")), (snapshot) => {
+    const remoteUsers = snapshot.docs
+      .map((docSnap) => ({
+        id: docSnap.id,
+        ...docSnap.data()
+      }))
+      .filter((u) => !DEMO_USER_IDS.has(u.id));
+
+    const current = getUsersStore();
+    // Merge remote and current users
+    const mergedMap = new Map();
+    current.forEach(u => mergedMap.set(u.id, u));
+    remoteUsers.forEach(u => mergedMap.set(u.id, { ...(mergedMap.get(u.id) || {}), ...u }));
+    const mergedList = Array.from(mergedMap.values()).filter((u) => !DEMO_USER_IDS.has(u.id));
+    localStorage.setItem(KEYS.USERS, JSON.stringify(mergedList));
+  }, () => {});
+} catch (e) {
+  // Offline fallback
+}
+
+// Initial Admin Sync to Firestore
+try {
+  const adminUser = INITIAL_USERS[0];
+  const cleanAdmin = sanitizeForFirestore(adminUser);
+  setDoc(doc(db, "users", adminUser.id), cleanAdmin, { merge: true }).catch(() => {});
+  setDoc(doc(db, "admins", adminUser.id), cleanAdmin, { merge: true }).catch(() => {});
+} catch (e) {}
 
 export function subscribeToAuth(callback) {
   authListeners.add(callback);
@@ -62,16 +73,17 @@ export function getUsersStore() {
   }
   try {
     const list = JSON.parse(data);
-    const adminIdx = list.findIndex((u) => u.role === "admin");
+    const cleaned = list.filter((u) => !DEMO_USER_IDS.has(u.id));
+    const adminIdx = cleaned.findIndex((u) => u.role === "admin");
     if (adminIdx !== -1) {
-      list[adminIdx].email = "asim@gmail.com";
-      list[adminIdx].password_hash = "asim@2903";
-      list[adminIdx].name = "Asim (Admin)";
+      cleaned[adminIdx].email = "asim@gmail.com";
+      cleaned[adminIdx].password_hash = "asim@2903";
+      cleaned[adminIdx].name = "Asim (Admin)";
     } else {
-      list.unshift(INITIAL_USERS[0]);
+      cleaned.unshift(INITIAL_USERS[0]);
     }
-    localStorage.setItem(KEYS.USERS, JSON.stringify(list));
-    return list;
+    localStorage.setItem(KEYS.USERS, JSON.stringify(cleaned));
+    return cleaned;
   } catch {
     localStorage.setItem(KEYS.USERS, JSON.stringify(INITIAL_USERS));
     return INITIAL_USERS;
@@ -101,7 +113,12 @@ export function getCurrentUser() {
   const data = localStorage.getItem(KEYS.SESSION);
   if (!data) return null;
   try {
-    return JSON.parse(data);
+    const sessionUser = JSON.parse(data);
+    if (sessionUser && DEMO_USER_IDS.has(sessionUser.id)) {
+      localStorage.removeItem(KEYS.SESSION);
+      return null;
+    }
+    return sessionUser;
   } catch {
     return null;
   }
@@ -281,8 +298,13 @@ export function registerCustomer(params) {
 
   const customerRecord = saveCustomer({
     name: params.name.trim(),
-    phone: params.phone?.trim() || undefined,
+    shop_name: params.shop_name?.trim() || params.name.trim(),
+    email: params.email.trim().toLowerCase(),
+    phone: params.phone?.trim() || params.mobile_number?.trim() || undefined,
+    mobile_number: params.mobile_number?.trim() || params.phone?.trim() || undefined,
+    whatsapp_number: params.phone?.trim() || params.mobile_number?.trim() || undefined,
     address: params.address?.trim() || undefined,
+    password_hash: params.password,
     status: "active",
     opening_balance: 0,
     opening_balance_date: new Date().toISOString().split("T")[0],
@@ -291,8 +313,10 @@ export function registerCustomer(params) {
   const newUserObj = {
     id: "usr_cust_" + Date.now(),
     name: params.name.trim(),
+    shop_name: params.shop_name?.trim() || params.name.trim(),
     email: params.email.trim().toLowerCase(),
-    phone: params.phone?.trim() || undefined,
+    phone: params.phone?.trim() || params.mobile_number?.trim() || undefined,
+    mobile_number: params.mobile_number?.trim() || params.phone?.trim() || undefined,
     role: "customer",
     customer_id: customerRecord.id,
     status: "active",
@@ -303,11 +327,18 @@ export function registerCustomer(params) {
   users.push(newUserObj);
   localStorage.setItem(KEYS.USERS, JSON.stringify(users));
 
+  try {
+    const cleanUser = sanitizeForFirestore(newUserObj);
+    setDoc(doc(db, "users", newUserObj.id), cleanUser).catch(() => {});
+  } catch (e) {}
+
   const sessionUser = {
     id: newUserObj.id,
     name: newUserObj.name,
+    shop_name: newUserObj.shop_name,
     email: newUserObj.email,
     phone: newUserObj.phone,
+    mobile_number: newUserObj.mobile_number,
     role: newUserObj.role,
     customer_id: newUserObj.customer_id,
     status: newUserObj.status,

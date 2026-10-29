@@ -38,9 +38,9 @@ export function setActiveRole(role) {
 
 export function getActiveCustomerId() {
   const stored = localStorage.getItem("a_one_star_active_customer_id_v1");
-  if (stored) return stored;
+  if (stored && !DEMO_CUSTOMER_IDS.has(stored)) return stored;
   const custs = getLocalCustomers();
-  return custs.length > 0 ? custs[0].id : "cust-1";
+  return custs.length > 0 ? custs[0].id : "";
 }
 
 export function setActiveCustomerId(id) {
@@ -59,92 +59,14 @@ const LOCAL_STORAGE_KEYS = {
   ACTIVE_CUSTOMER_ID: "a_one_star_active_customer_id_v1"
 };
 
-// Initial Seed Customers
-const INITIAL_CUSTOMERS = [
-  {
-    id: "cust-1",
-    name: "Al-Madina Chicken Shop",
-    phone: "9876543210",
-    whatsapp_number: "9876543210",
-    address: "Market Road, Shop No. 12",
-    status: "active",
-    reminder_enabled: true,
-    opening_balance: 5000,
-    opening_balance_date: "2026-08-01",
-    opening_balance_notes: "Initial balance carried over",
-    current_balance: 14600,
-    created_at: new Date("2026-08-01").toISOString()
-  },
-  {
-    id: "cust-2",
-    name: "Star Broiler Center",
-    phone: "9123456789",
-    whatsapp_number: "9123456789",
-    address: "Station Area, Main Gate",
-    status: "active",
-    reminder_enabled: true,
-    opening_balance: 0,
-    opening_balance_date: "2026-08-05",
-    current_balance: 8400,
-    created_at: new Date("2026-08-05").toISOString()
-  },
-  {
-    id: "cust-3",
-    name: "Golden Poultry Wholesale",
-    phone: "9988776655",
-    whatsapp_number: "9988776655",
-    address: "Bypass Highway",
-    status: "active",
-    reminder_enabled: true,
-    opening_balance: 2000,
-    opening_balance_date: "2026-08-10",
-    current_balance: 0,
-    created_at: new Date("2026-08-10").toISOString()
-  }
-];
+// Demo/Seed IDs to filter out so no hardcoded dummy data is shown
+export const DEMO_CUSTOMER_IDS = new Set(["cust-1", "cust-2", "cust-3"]);
+export const DEMO_SALE_IDS = new Set(["sale-1", "sale-2"]);
+export const DEMO_PAYMENT_IDS = new Set(["pay-1"]);
 
-const INITIAL_SALES = [
-  {
-    id: "sale-1",
-    customer_id: "cust-1",
-    customer_name: "Al-Madina Chicken Shop",
-    sale_date: getTodayString(),
-    quantity_of_broilers: 50,
-    weight_kg: 120,
-    rate_per_kg: 130,
-    total_amount: 15600,
-    notes: "Morning delivery - Grade A Live Chicken",
-    created_at: new Date().toISOString()
-  },
-  {
-    id: "sale-2",
-    customer_id: "cust-2",
-    customer_name: "Star Broiler Center",
-    sale_date: getTodayString(),
-    quantity_of_broilers: 30,
-    weight_kg: 70,
-    rate_per_kg: 120,
-    total_amount: 8400,
-    notes: "Regular supply batch",
-    created_at: new Date().toISOString()
-  }
-];
-
-const INITIAL_PAYMENTS = [
-  {
-    id: "pay-1",
-    customer_id: "cust-1",
-    customer_name: "Al-Madina Chicken Shop",
-    payment_date: getTodayString(),
-    amount: 6000,
-    payment_mode: "UPI",
-    payment_gateway: "UPI_Direct",
-    transaction_id: "TXN_UPI_9876543210",
-    payment_status: "successful",
-    notes: "GPay transfer for previous bill",
-    created_at: new Date().toISOString()
-  }
-];
+const INITIAL_CUSTOMERS = [];
+const INITIAL_SALES = [];
+const INITIAL_PAYMENTS = [];
 
 const DEFAULT_SETTINGS = {
   shop_name: "A ONE STAR",
@@ -156,7 +78,7 @@ const DEFAULT_SETTINGS = {
   reminder_enabled_global: true,
   reminder_time: "09:00",
   last_reminder_run: new Date().toISOString(),
-  successful_reminders_count: 5,
+  successful_reminders_count: 0,
   failed_reminders_count: 0
 };
 
@@ -174,34 +96,45 @@ export function subscribeToStore(callback) {
 // REAL-TIME FIRESTORE REACTIVE LISTENERS
 try {
   onSnapshot(query(collection(db, "customers")), (snapshot) => {
-    if (!snapshot.empty) {
-      const remoteCustomers = snapshot.docs.map((docSnap) => ({
+    const remoteCustomers = snapshot.docs
+      .map((docSnap) => ({
         id: docSnap.id,
         ...docSnap.data()
-      }));
-      localStorage.setItem(LOCAL_STORAGE_KEYS.CUSTOMERS, JSON.stringify(remoteCustomers));
-      notifyListeners();
-    }
+      }))
+      .filter((c) => !DEMO_CUSTOMER_IDS.has(c.id));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.CUSTOMERS, JSON.stringify(remoteCustomers));
+    notifyListeners();
   }, () => {});
 
   onSnapshot(query(collection(db, "sales")), (snapshot) => {
-    if (!snapshot.empty) {
-      const remoteSales = snapshot.docs.map((docSnap) => ({
+    const remoteSales = snapshot.docs
+      .map((docSnap) => ({
         id: docSnap.id,
         ...docSnap.data()
-      }));
-      localStorage.setItem(LOCAL_STORAGE_KEYS.SALES, JSON.stringify(remoteSales));
-      notifyListeners();
-    }
+      }))
+      .filter((s) => !DEMO_SALE_IDS.has(s.id));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.SALES, JSON.stringify(remoteSales));
+    notifyListeners();
   }, () => {});
 
   onSnapshot(query(collection(db, "payments")), (snapshot) => {
-    if (!snapshot.empty) {
-      const remotePayments = snapshot.docs.map((docSnap) => ({
+    const remotePayments = snapshot.docs
+      .map((docSnap) => ({
         id: docSnap.id,
         ...docSnap.data()
-      }));
-      localStorage.setItem(LOCAL_STORAGE_KEYS.PAYMENTS, JSON.stringify(remotePayments));
+      }))
+      .filter((p) => !DEMO_PAYMENT_IDS.has(p.id));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.PAYMENTS, JSON.stringify(remotePayments));
+    notifyListeners();
+  }, () => {});
+
+  // Real-time Settings synchronization from Firestore
+  onSnapshot(doc(db, "settings", "shop_settings"), (docSnap) => {
+    if (docSnap.exists()) {
+      const remoteSettings = docSnap.data();
+      const current = getLocalSettings();
+      const merged = { ...current, ...remoteSettings };
+      localStorage.setItem(LOCAL_STORAGE_KEYS.SETTINGS, JSON.stringify(merged));
       notifyListeners();
     }
   }, () => {});
@@ -213,50 +146,63 @@ try {
 export function getLocalCustomers() {
   const data = localStorage.getItem(LOCAL_STORAGE_KEYS.CUSTOMERS);
   if (!data) {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.CUSTOMERS, JSON.stringify(INITIAL_CUSTOMERS));
-    return INITIAL_CUSTOMERS;
+    localStorage.setItem(LOCAL_STORAGE_KEYS.CUSTOMERS, JSON.stringify([]));
+    return [];
   }
   try {
     const list = JSON.parse(data);
-    return list.map(c => ({
+    const cleaned = list.filter((c) => !DEMO_CUSTOMER_IDS.has(c.id));
+    if (cleaned.length !== list.length) {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.CUSTOMERS, JSON.stringify(cleaned));
+    }
+    return cleaned.map(c => ({
       ...c,
       whatsapp_number: c.whatsapp_number || c.phone || "",
       reminder_enabled: c.reminder_enabled !== undefined ? c.reminder_enabled : true
     }));
   } catch {
-    return INITIAL_CUSTOMERS;
+    return [];
   }
 }
 
 export function getLocalSales() {
   const data = localStorage.getItem(LOCAL_STORAGE_KEYS.SALES);
   if (!data) {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.SALES, JSON.stringify(INITIAL_SALES));
-    return INITIAL_SALES;
+    localStorage.setItem(LOCAL_STORAGE_KEYS.SALES, JSON.stringify([]));
+    return [];
   }
   try {
-    return JSON.parse(data);
+    const list = JSON.parse(data);
+    const cleaned = list.filter((s) => !DEMO_SALE_IDS.has(s.id));
+    if (cleaned.length !== list.length) {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.SALES, JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch {
-    return INITIAL_SALES;
+    return [];
   }
 }
 
 export function getLocalPayments() {
   const data = localStorage.getItem(LOCAL_STORAGE_KEYS.PAYMENTS);
   if (!data) {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.PAYMENTS, JSON.stringify(INITIAL_PAYMENTS));
-    return INITIAL_PAYMENTS;
+    localStorage.setItem(LOCAL_STORAGE_KEYS.PAYMENTS, JSON.stringify([]));
+    return [];
   }
   try {
     const list = JSON.parse(data);
-    return list.map(p => ({
+    const cleaned = list.filter((p) => !DEMO_PAYMENT_IDS.has(p.id));
+    if (cleaned.length !== list.length) {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.PAYMENTS, JSON.stringify(cleaned));
+    }
+    return cleaned.map(p => ({
       ...p,
       payment_gateway: p.payment_gateway || "Manual",
       transaction_id: p.transaction_id || `TXN_${p.id}`,
       payment_status: p.payment_status || "successful"
     }));
   } catch {
-    return INITIAL_PAYMENTS;
+    return [];
   }
 }
 
@@ -506,16 +452,25 @@ export function deletePayment(id) {
   } catch (e) {}
 }
 
-export function saveSettings(newSettings) {
+export async function saveSettings(newSettings) {
   const current = getLocalSettings();
-  const updated = { ...current, ...newSettings };
+  const updated = { 
+    ...current, 
+    ...newSettings,
+    updated_at: new Date().toISOString()
+  };
   localStorage.setItem(LOCAL_STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
   notifyListeners();
 
   try {
     const cleanSettings = sanitizeForFirestore(updated);
-    setDoc(doc(db, "settings", "shop_settings"), cleanSettings, { merge: true }).catch(() => {});
-  } catch (e) {}
+    await Promise.allSettled([
+      setDoc(doc(db, "settings", "shop_settings"), cleanSettings, { merge: true }),
+      setDoc(doc(db, "admins", "admin_settings"), cleanSettings, { merge: true })
+    ]);
+  } catch (e) {
+    console.error("Error saving settings to Firestore:", e);
+  }
 
   return updated;
 }
