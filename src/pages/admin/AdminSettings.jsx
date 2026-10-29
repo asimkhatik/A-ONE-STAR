@@ -23,6 +23,7 @@ export const AdminSettings = () => {
   // WhatsApp Reminder Config
   const [reminderGlobal, setReminderGlobal] = useState(true);
   const [reminderTime, setReminderTime] = useState("09");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const current = getLocalSettings();
@@ -36,25 +37,32 @@ export const AdminSettings = () => {
     setReminderTime(current.reminder_time || "09");
   }, []);
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!shopName.trim()) {
       toast.error("Shop name is required");
       return;
     }
 
-    saveSettings({
-      shop_name: shopName.trim(),
-      tagline: tagline.trim(),
-      phone: phone.trim(),
-      address: address.trim(),
-      upi_id: upiId.trim(),
-      default_rate_per_kg: parseFloat(defaultRate) || 130,
-      reminder_enabled_global: reminderGlobal,
-      reminder_time: reminderTime
-    });
+    setIsSaving(true);
+    try {
+      await saveSettings({
+        shop_name: shopName.trim(),
+        tagline: tagline.trim(),
+        phone: phone.trim(),
+        address: address.trim(),
+        upi_id: upiId.trim(),
+        default_rate_per_kg: parseFloat(defaultRate) || 130,
+        reminder_enabled_global: reminderGlobal,
+        reminder_time: reminderTime
+      });
 
-    toast.success("Business settings & WhatsApp reminder schedule updated");
+      toast.success("Settings saved to Firebase Store successfully!");
+    } catch (err) {
+      toast.error("Failed to save settings to Firebase: " + (err.message || "Unknown error"));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleRunRemindersNow = () => {
@@ -235,10 +243,15 @@ export const AdminSettings = () => {
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="flex items-center space-x-2 bg-amber-400 hover:bg-amber-300 text-[#0b3d2e] font-extrabold px-6 py-3 rounded-xl shadow-lg transition active:scale-95"
+            disabled={isSaving}
+            className="flex items-center space-x-2 bg-amber-400 hover:bg-amber-300 disabled:opacity-60 text-[#0b3d2e] font-extrabold px-6 py-3 rounded-xl shadow-lg transition active:scale-95"
           >
-            <Save className="w-5 h-5" />
-            <span>Save All Settings</span>
+            {isSaving ? (
+              <span className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-[#0b3d2e] border-t-transparent" />
+            ) : (
+              <Save className="w-5 h-5" />
+            )}
+            <span>{isSaving ? "Saving to Firebase..." : "Save All Settings"}</span>
           </button>
         </div>
       </form>
