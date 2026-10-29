@@ -122,7 +122,7 @@ export const DateFilterPopover = ({
   const isHighlighted = isActive || isCustomDate;
 
   return (
-    <div className="relative inline-block" ref={containerRef}>
+    <div className="relative inline-block z-30" ref={containerRef}>
       {/* Trigger Button */}
       <button
         type="button"
@@ -156,7 +156,7 @@ export const DateFilterPopover = ({
 
       {/* Popover Dropdown */}
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-80 bg-[#0f172a] border border-slate-700 rounded-2xl shadow-2xl p-4 z-50 text-white animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute left-0 mt-2 w-80 max-w-[90vw] bg-[#0f172a] border border-slate-700 rounded-2xl shadow-2xl p-4 z-50 text-white animate-in fade-in zoom-in-95 duration-150">
           <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-3">
             <div className="flex items-center gap-2">
               <CalendarIcon className="w-4 h-4 text-amber-400" />

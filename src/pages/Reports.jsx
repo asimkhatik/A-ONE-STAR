@@ -99,7 +99,7 @@ export const Reports = () => {
       </div>
 
       {/* Filter Tabs (Dark Theme) */}
-      <div className="bg-[#0f172a] p-4 rounded-3xl border border-slate-800 shadow-xl flex items-center space-x-2 overflow-x-auto">
+      <div className="bg-[#0f172a] p-4 rounded-3xl border border-slate-800 shadow-xl flex items-center flex-wrap gap-2 relative z-30">
         <span className="text-xs font-semibold text-slate-400 mr-2 shrink-0">Timeframe:</span>
         {presetRanges.map((range) => (
           <button

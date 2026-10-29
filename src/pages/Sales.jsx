@@ -102,7 +102,7 @@ export const Sales = ({ onOpenSaleModal }) => {
       </div>
 
       {/* Filter & Summary Banner (Dark Theme) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#0f172a] p-5 rounded-3xl border border-slate-800 shadow-xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#0f172a] p-5 rounded-3xl border border-slate-800 shadow-xl relative z-30">
         {/* Search */}
         <div className="relative">
           <Search className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
