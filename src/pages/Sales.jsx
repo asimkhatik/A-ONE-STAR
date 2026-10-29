@@ -10,12 +10,14 @@ import {
 import { getLocalSales, deleteSale, subscribeToStore } from "../lib/firebase";
 import { formatCurrency, formatDate, getTodayString } from "../lib/utils";
 import { exportSalesToExcel } from "../lib/excelExporter";
+import { DateFilterPopover } from "../components/DateFilterPopover";
 import { toast } from "sonner";
 
 export const Sales = ({ onOpenSaleModal }) => {
   const [sales, setSales] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("all");
+  const [selectedDate, setSelectedDate] = useState("");
 
   const loadData = () => {
     setSales(getLocalSales());
@@ -42,6 +44,10 @@ export const Sales = ({ onOpenSaleModal }) => {
       (sale.notes || "").toLowerCase().includes(searchTerm.toLowerCase());
 
     if (!matchesSearch) return false;
+
+    if (selectedDate) {
+      return sale.sale_date === selectedDate;
+    }
 
     if (dateFilter === "today") {
       return sale.sale_date === todayStr;
@@ -77,7 +83,7 @@ export const Sales = ({ onOpenSaleModal }) => {
 
         <div className="flex items-center space-x-3 w-full sm:w-auto">
           <button
-            onClick={() => exportSalesToExcel(filteredSales)}
+            onClick={() => exportSalesToExcel(filteredSales, `Sales_Report_${selectedDate || dateFilter}.xlsx`)}
             className="flex-1 sm:flex-none flex items-center justify-center space-x-1.5 bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 font-semibold text-sm px-4 py-2.5 rounded-xl border border-emerald-700/60 transition"
           >
             <FileSpreadsheet className="w-4 h-4 text-amber-400" />
@@ -111,34 +117,52 @@ export const Sales = ({ onOpenSaleModal }) => {
 
         {/* Date Filter Tabs */}
         <div className="flex items-center space-x-1 bg-[#18233c] p-1 rounded-xl border border-slate-700/80">
+          <DateFilterPopover
+            selectedDate={selectedDate}
+            onDateChange={(date) => {
+              setSelectedDate(date);
+              if (date) {
+                setDateFilter("custom");
+              } else {
+                setDateFilter("all");
+              }
+            }}
+            isActive={dateFilter === "all" || Boolean(selectedDate)}
+            onSelectAllTime={() => {
+              setSelectedDate("");
+              setDateFilter("all");
+            }}
+            size="sm"
+          />
           <button
-            onClick={() => setDateFilter("all")}
+            onClick={() => {
+              setDateFilter("today");
+              setSelectedDate("");
+            }}
             className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
-              dateFilter === "all" ? "bg-amber-400 text-[#0b3d2e] shadow" : "text-slate-400 hover:text-white"
-            }`}
-          >
-            All Time
-          </button>
-          <button
-            onClick={() => setDateFilter("today")}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
-              dateFilter === "today" ? "bg-amber-400 text-[#0b3d2e] shadow" : "text-slate-400 hover:text-white"
+              dateFilter === "today" && !selectedDate ? "bg-amber-400 text-[#0b3d2e] shadow" : "text-slate-400 hover:text-white"
             }`}
           >
             Today
           </button>
           <button
-            onClick={() => setDateFilter("this_week")}
+            onClick={() => {
+              setDateFilter("this_week");
+              setSelectedDate("");
+            }}
             className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
-              dateFilter === "this_week" ? "bg-amber-400 text-[#0b3d2e] shadow" : "text-slate-400 hover:text-white"
+              dateFilter === "this_week" && !selectedDate ? "bg-amber-400 text-[#0b3d2e] shadow" : "text-slate-400 hover:text-white"
             }`}
           >
             This Week
           </button>
           <button
-            onClick={() => setDateFilter("this_month")}
+            onClick={() => {
+              setDateFilter("this_month");
+              setSelectedDate("");
+            }}
             className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
-              dateFilter === "this_month" ? "bg-amber-400 text-[#0b3d2e] shadow" : "text-slate-400 hover:text-white"
+              dateFilter === "this_month" && !selectedDate ? "bg-amber-400 text-[#0b3d2e] shadow" : "text-slate-400 hover:text-white"
             }`}
           >
             This Month
@@ -186,7 +210,9 @@ export const Sales = ({ onOpenSaleModal }) => {
               {filteredSales.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="py-10 text-center text-slate-400">
-                    No sales records found matching your filters.
+                    {selectedDate 
+                      ? `No sales records found for ${formatDate(selectedDate)}.` 
+                      : "No sales records found matching your filters."}
                   </td>
                 </tr>
               ) : (

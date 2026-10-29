@@ -10,12 +10,14 @@ import {
 import { getLocalSales, getLocalPayments, getLocalCustomers, subscribeToStore } from "../lib/firebase";
 import { formatCurrency, formatDate, getTodayString } from "../lib/utils";
 import { exportSalesToExcel } from "../lib/excelExporter";
+import { DateFilterPopover } from "../components/DateFilterPopover";
 
 export const Reports = () => {
   const [sales, setSales] = useState([]);
   const [payments, setPayments] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [dateRange, setDateRange] = useState("this_month");
+  const [selectedDate, setSelectedDate] = useState("");
 
   const loadData = () => {
     setSales(getLocalSales());
@@ -32,6 +34,13 @@ export const Reports = () => {
   const todayStr = getTodayString();
 
   const filterByDate = (items) => {
+    if (selectedDate) {
+      return items.filter((item) => {
+        const dStr = item.sale_date || item.payment_date;
+        return dStr === selectedDate;
+      });
+    }
+
     if (dateRange === "all") return items;
     const now = new Date();
 
@@ -62,11 +71,10 @@ export const Reports = () => {
   const totalPaymentsCollected = filteredPayments.reduce((sum, p) => sum + p.amount, 0);
   const totalOutstanding = customers.reduce((sum, c) => sum + (c.current_balance > 0 ? c.current_balance : 0), 0);
 
-  const timeRanges = [
+  const presetRanges = [
     { key: "today", label: "Today" },
     { key: "this_week", label: "This Week" },
     { key: "this_month", label: "This Month" },
-    { key: "all", label: "All Time" },
   ];
 
   return (
@@ -82,7 +90,7 @@ export const Reports = () => {
         </div>
 
         <button
-          onClick={() => exportSalesToExcel(filteredSales, `Business_Report_${dateRange}.xlsx`)}
+          onClick={() => exportSalesToExcel(filteredSales, `Business_Report_${selectedDate || dateRange}.xlsx`)}
           className="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm px-4 py-2.5 rounded-xl shadow-lg transition"
         >
           <FileSpreadsheet className="w-4 h-4 text-amber-300" />
@@ -93,12 +101,15 @@ export const Reports = () => {
       {/* Filter Tabs (Dark Theme) */}
       <div className="bg-[#0f172a] p-4 rounded-3xl border border-slate-800 shadow-xl flex items-center space-x-2 overflow-x-auto">
         <span className="text-xs font-semibold text-slate-400 mr-2 shrink-0">Timeframe:</span>
-        {timeRanges.map((range) => (
+        {presetRanges.map((range) => (
           <button
             key={range.key}
-            onClick={() => setDateRange(range.key)}
+            onClick={() => {
+              setDateRange(range.key);
+              setSelectedDate("");
+            }}
             className={`px-4 py-2 text-xs font-bold rounded-xl transition whitespace-nowrap ${
-              dateRange === range.key
+              dateRange === range.key && !selectedDate
                 ? "bg-amber-400 text-[#0b3d2e] shadow-md"
                 : "bg-[#18233c] text-slate-400 hover:text-white"
             }`}
@@ -106,6 +117,23 @@ export const Reports = () => {
             {range.label}
           </button>
         ))}
+
+        <DateFilterPopover
+          selectedDate={selectedDate}
+          onDateChange={(date) => {
+            setSelectedDate(date);
+            if (date) {
+              setDateRange("custom");
+            } else {
+              setDateRange("all");
+            }
+          }}
+          isActive={dateRange === "all" || Boolean(selectedDate)}
+          onSelectAllTime={() => {
+            setSelectedDate("");
+            setDateRange("all");
+          }}
+        />
       </div>
 
       {/* Metrics Grid (Dark Theme) */}
@@ -165,9 +193,16 @@ export const Reports = () => {
 
       {/* Filtered Sales Breakdown (Dark Theme) */}
       <div className="bg-[#0f172a] rounded-3xl border border-slate-800 shadow-xl p-6 space-y-4">
-        <h3 className="font-heading font-bold text-white text-lg">
-          Sales Summary Breakdown
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-heading font-bold text-white text-lg flex items-center gap-2">
+            <span>Sales Summary Breakdown</span>
+            {selectedDate && (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-semibold border border-amber-400/30">
+                {formatDate(selectedDate)}
+              </span>
+            )}
+          </h3>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
@@ -191,7 +226,11 @@ export const Reports = () => {
               ))}
               {filteredSales.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-slate-400">No records found for selected period.</td>
+                  <td colSpan={5} className="py-6 text-center text-slate-400">
+                    {selectedDate 
+                      ? `No records found for ${formatDate(selectedDate)}.` 
+                      : "No records found for selected period."}
+                  </td>
                 </tr>
               )}
             </tbody>
