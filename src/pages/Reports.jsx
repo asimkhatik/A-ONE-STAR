@@ -34,7 +34,7 @@ export const Reports = () => {
   const todayStr = getTodayString();
 
   const filterByDate = (items) => {
-    if (selectedDate) {
+    if (selectedDate && selectedDate.length === 10) {
       return items.filter((item) => {
         const dStr = item.sale_date || item.payment_date;
         return dStr === selectedDate;

@@ -45,7 +45,7 @@ export const Sales = ({ onOpenSaleModal }) => {
 
     if (!matchesSearch) return false;
 
-    if (selectedDate) {
+    if (selectedDate && selectedDate.length === 10) {
       return sale.sale_date === selectedDate;
     }
 
